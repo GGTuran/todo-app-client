@@ -5,34 +5,29 @@ import Container from "@/components/ui/Container";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Todos = () => {
 
 
-    const [todos, setTodos] = useState([
-        {
-            "_id": "6621fe4bf2a556db95e5931c",
-            "todo": "Be a full stack",
-            "priority": "High",
-            "isComplete": false,
-            "__v": 0
-        },
-        {
-            "_id": "662200bc3550d0037c12d444",
-            "todo": "Be a MERN Stack first",
-            "priority": "High",
-            "isComplete": false,
-            "__v": 0
-        },
-        {
-            "_id": "66239e2647962f6d4a79531e",
-            "todo": "be a full stack",
-            "priority": "High",
-            "isComplete": false,
-            "__v": 0
+    const [todos, setTodos] = useState([]);
+
+    const fetchTodo = async () =>{
+        try{
+            const res = await fetch('http://localhost:5000/todos');
+            const allTodos = await res.json();
+            console.log(allTodos);
+            setTodos(allTodos); 
+        }catch(err){
+            console.log(err);
         }
-    ]); 
+    };
+
+
+    useEffect(() =>{
+        fetchTodo();
+
+    } , []) 
 
 
     return (
