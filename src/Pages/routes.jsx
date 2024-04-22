@@ -2,11 +2,12 @@ import  App  from "@/App";
 import { createBrowserRouter } from "react-router-dom";
 import Register from "./Register";
 import Login from "./Login";
+import Private from "./Private";
 
 const routes = createBrowserRouter([
     {
         path:"/",
-        element:<App></App>
+        element:<Private><App></App></Private>
     },
     {
         path:"/register",

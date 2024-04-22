@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,9 +9,54 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const { register, handleSubmit } = useForm({
+    // only for developement
+    defaultValues: {
+      
+      email: "tayyabturan@yahoomail.com",
+      password: "turan1234",
+    },
+  });
+
+  const onSubmit = async (data) => {
+    const userData = {  ...data };
+    console.log(userData);
+
+    try {
+      const res = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!res.ok) {
+        throw new Error("Error on todo");
+      }
+
+      const data = await res.json();
+
+      if(data.message === 'Logged in'){
+        localStorage.setItem("AccessToken", data.data.accessToken );
+        navigate("/");
+      } else{
+        throw new Error (data.message);
+      }
+
+
+
+      
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="w-full h-screen flex justify-center items-center">
       <Card className="mx-auto max-w-sm">
@@ -21,7 +67,7 @@ export default function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -29,6 +75,7 @@ export default function Login() {
                 type="email"
                 placeholder="m@example.com"
                 required
+                {...register("email")}
               />
             </div>
             <div className="grid gap-2">
@@ -41,7 +88,9 @@ export default function Login() {
                   Forgot your password?
                 </Link>
               </div>
-              <Input id="password" type="password" required />
+              <Input id="password" type="password" required
+              {...register("password")}
+              />
             </div>
             <Button type="submit" className="w-full">
               Login
@@ -49,7 +98,7 @@ export default function Login() {
             <Button variant="outline" className="w-full">
               Login with Google
             </Button>
-          </div>
+          </form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
             <Link to="/register" className="underline">
